@@ -1,6 +1,6 @@
-import { Injectable, Output, EventEmitter } from "@angular/core";
-import { Recipe } from './recipe.model';
+import { EventEmitter, Injectable } from "@angular/core";
 import { Ingredient } from '../shared/ingredient.model';
+import { Recipe } from './recipe.model';
 
 @Injectable({providedIn: 'root'})
 export class RecipeService {
@@ -19,5 +19,9 @@ export class RecipeService {
 
     getRecipes() {
         return this.recipes.slice(); // the use of 'slice' with no arguments returns copy of the array
+    }
+
+    getRecipe(id: number): Recipe {
+        return this.recipes[id];
     }
 }
