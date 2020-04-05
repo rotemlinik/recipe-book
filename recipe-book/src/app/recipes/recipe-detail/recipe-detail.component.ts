@@ -27,7 +27,7 @@ export class RecipeDetailComponent implements OnInit {
 
   onAddToShoppingList() {
     this.recipe.ingredients.forEach((ingredient) => {
-      this.shoppingService.addProduct(ingredient);
+      this.shoppingService.addIngredient(ingredient);
     })
   }
 
