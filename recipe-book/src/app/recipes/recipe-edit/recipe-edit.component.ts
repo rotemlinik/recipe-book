@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { RecipeService } from '../recipe.service';
 import { Recipe } from '../recipe.model';
@@ -14,7 +14,9 @@ export class RecipeEditComponent implements OnInit {
   editMode = false;
   recipeForm: FormGroup;
 
-  constructor(private route: ActivatedRoute, private recipeService: RecipeService) { }
+  constructor(private route: ActivatedRoute, 
+              private recipeService: RecipeService,
+              private router: Router) { }
 
   ngOnInit(): void {
     this.route.params.subscribe((params: Params) => {
@@ -31,7 +33,6 @@ export class RecipeEditComponent implements OnInit {
     let recipeIngredients = new FormArray([]);
 
     if (this.editMode) {
-      console.log("XXXXXXXXX INIT FORM - EDIT MODE XXXXXXXXX")
       const recipe = this.recipeService.getRecipe(this.id);
 
       recipeName = recipe.name;
@@ -61,13 +62,25 @@ export class RecipeEditComponent implements OnInit {
     } else {
       this.recipeService.addRecipe(this.recipeForm.value);
     }
+
+    this.backToPreviousRoute();
   }
  
   onAddIngredient() {
-    (<FormArray>this.recipeForm.get('ingredients')).push(
+    this.ingredients.push(
       this.createIngredientFormGroup(null, null)
     );
   }
+
+  onDeleteIngredient(index: number) {
+    this.ingredients.removeAt(index);
+  }
+
+  onCancel() {
+    this.ingredients.clear();
+    this.backToPreviousRoute();
+  }
+
   
   createIngredientFormGroup(name: string, amount: number) {
     return new FormGroup({
@@ -77,6 +90,14 @@ export class RecipeEditComponent implements OnInit {
   }
 
   get controls() {
-    return (<FormArray>this.recipeForm.get('ingredients')).controls;
+    return this.ingredients.controls;
+  }
+
+  get ingredients() {
+    return (<FormArray>this.recipeForm.get('ingredients'));
+  }
+
+  backToPreviousRoute() {
+    this.router.navigate(['../'], {relativeTo: this.route});
   }
 }

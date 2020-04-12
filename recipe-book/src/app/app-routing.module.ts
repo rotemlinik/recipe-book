@@ -5,14 +5,15 @@ import { ShoppingListComponent } from './shopping-list/shopping-list.component';
 import { RecipeDetailComponent } from './recipes/recipe-detail/recipe-detail.component';
 import { RecipeIdleComponent } from './recipes/recipe-idle/recipe-idle.component';
 import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
+import { RecipesResolverService } from './recipes/recipes-resolver.service';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: '/recipes', pathMatch: 'full' },
     { path: 'recipes', component: RecipesComponent, children: [
         { path: '', component: RecipeIdleComponent, data: {message: 'Please select a Recipe:)'} },
         { path: 'new', component: RecipeEditComponent },
-        { path: ':id', component: RecipeDetailComponent },
-        { path: ':id/edit', component: RecipeEditComponent }
+        { path: ':id', component: RecipeDetailComponent, resolve: [RecipesResolverService] },
+        { path: ':id/edit', component: RecipeEditComponent ,  resolve: [RecipesResolverService] }
     ] },
     { path: 'shopping-list', component: ShoppingListComponent }
 ];
