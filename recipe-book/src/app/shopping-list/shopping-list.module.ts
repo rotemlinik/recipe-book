@@ -11,8 +11,9 @@ import { ShoppingListComponent } from './shopping-list.component';
     ShoppingEditComponent
   ],
   imports: [
+    // empty path because of lazy loading. at that point we are already on /shopping-list
     RouterModule.forChild([
-      { path: 'shopping-list', component: ShoppingListComponent }
+      { path: '', component: ShoppingListComponent } 
     ]),
     FormsModule,
     SharedModule 

@@ -8,7 +8,7 @@ import { RecipeDetailComponent } from './recipe-detail/recipe-detail.component';
 import { RecipesResolverService } from './recipes-resolver.service';
 
 const routes: Routes = [
-  { path: 'recipes', 
+  { path: '', // empty path because of lazy loading. at that point we are already on /recipes
     component: RecipesComponent, 
     canActivate: [AuthGuard],
     children: [
