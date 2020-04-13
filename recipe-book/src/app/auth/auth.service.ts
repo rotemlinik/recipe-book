@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { throwError, BehaviorSubject } from 'rxjs';
+import { User } from './user.model';
+import { Router } from '@angular/router';
 
 export interface AuthResponseData {
   idToken: string,
@@ -14,10 +16,14 @@ export interface AuthResponseData {
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  signUpUrl = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCuowidyXAOQqaVYQwYFKOPbKQNMCjFgYQ';
-  loginUrl = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCuowidyXAOQqaVYQwYFKOPbKQNMCjFgYQ';
+  authBaseUrl = 'https://identitytoolkit.googleapis.com/v1/accounts:';
+  keyQueryParam = '?key=AIzaSyCuowidyXAOQqaVYQwYFKOPbKQNMCjFgYQ';
+  signUpUrl = this.authBaseUrl + 'signUp' + this.keyQueryParam;
+  loginUrl = this.authBaseUrl + 'signInWithPassword' + this.keyQueryParam;
+  user = new BehaviorSubject<User>(null);
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient,
+              private router: Router) {}
 
   signUp(email: string, password: string) {
     return this.httpClient.post<AuthResponseData>(
@@ -27,7 +33,7 @@ export class AuthService {
         password: password,
         returnSecureToken: true
       } 
-    ).pipe(catchError(this.handleError));
+    ).pipe(catchError(this.handleError), tap(this.handleAuthentication.bind(this)));
   }
 
   login(email: string, password: string) {
@@ -38,7 +44,41 @@ export class AuthService {
         password: password,
         returnSecureToken: true
       }
-    ).pipe(catchError(this.handleError));
+    ).pipe(catchError(this.handleError), tap(this.handleAuthentication.bind(this)));
+  }
+
+  logout() {
+    this.user.next(null);
+    this.router.navigate(['/auth']);
+  }
+
+  autoLogin() {
+    const userData: {
+      email: string, 
+      id: string, 
+      _token: string,
+      _tokenExpirationDate: Date
+    } = JSON.parse(localStorage.getItem('userData'));
+
+    if (!userData) {
+      return;
+    }
+
+    const loadedUser = new User(userData.email, userData.id, userData._token, userData._tokenExpirationDate);
+    if (loadedUser.token) {
+      this.user.next(loadedUser);
+    }
+  }
+
+  private handleAuthentication(responseData: AuthResponseData) {
+    console.log("in handleeeeeee")
+    const millisecondToExpiration = +responseData.expiresIn * 1000;
+    const currentTimeInMillis = new Date().getTime();
+    const expirationDate = new Date(currentTimeInMillis + millisecondToExpiration);
+    const user = new User(responseData.email, responseData.localId, responseData.idToken, expirationDate);
+
+    this.user.next(user);
+    localStorage.setItem('userData', JSON.stringify(user)); // save user data so login state will survive app reload
   }
 
   private handleError(errorResponse: HttpErrorResponse) {

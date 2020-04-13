@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { RecipeService } from '../recipes/recipe.service';
 import { Recipe } from '../recipes/recipe.model';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, take, exhaustMap } from 'rxjs/operators';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({providedIn: 'root'})
 export class DataStorageService {
-  recipeBookBackendUrl = 'https://recipe-book-backend-9f161.firebaseio.com/posts.json';
+  recipeBookBackendUrl = 'https://recipe-book-backend-9f161.firebaseio.com/recipes.json';
 
   constructor(private httpClient: HttpClient,
-    private recipeService: RecipeService) {}
+              private recipeService: RecipeService, 
+              private authService: AuthService) {}
 
   storeRecipes() {
     const recipes = this.recipeService.getRecipes();
@@ -25,14 +27,14 @@ export class DataStorageService {
     return this.httpClient
       .get<Recipe[]>(this.recipeBookBackendUrl)
       .pipe(
-        map(recipes => {
-        return recipes.map(recipe => {
-          return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : null};
-        });
-      }),
-        tap(recipes => {
-          this.recipeService.setRecipes(recipes);
-        })
-      )
+        map(recipes => { return this.addIngredientsArrayIfMissing(recipes); }),
+        tap(recipes => { this.recipeService.setRecipes(recipes); })
+      );
+  }
+
+  private addIngredientsArrayIfMissing(recipes: Recipe[]) {
+    return recipes.map(recipe => {
+      return {...recipe, ingredients: recipe.ingredients ? recipe.ingredients : null};
+    });
   }
 }
