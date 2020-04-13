@@ -4,6 +4,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { throwError, BehaviorSubject } from 'rxjs';
 import { User } from './user.model';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment'
 
 export interface AuthResponseData {
   idToken: string,
@@ -17,7 +18,7 @@ export interface AuthResponseData {
 @Injectable({providedIn: 'root'})
 export class AuthService {
   private authBaseUrl = 'https://identitytoolkit.googleapis.com/v1/accounts:';
-  private keyQueryParam = '?key=AIzaSyCuowidyXAOQqaVYQwYFKOPbKQNMCjFgYQ';
+  private keyQueryParam = '?key=' + environment.firebaseApiKey;
   private signUpUrl = this.authBaseUrl + 'signUp' + this.keyQueryParam;
   private loginUrl = this.authBaseUrl + 'signInWithPassword' + this.keyQueryParam;
   private userDataKey = 'userData';
