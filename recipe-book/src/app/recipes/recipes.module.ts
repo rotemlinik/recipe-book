@@ -1,7 +1,7 @@
-import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { SharedModule } from '../shared/shared.module';
 import { RecipeDetailComponent } from './recipe-detail/recipe-detail.component';
 import { RecipeEditComponent } from './recipe-edit/recipe-edit.component';
 import { RecipeIdleComponent } from './recipe-idle/recipe-idle.component';
@@ -23,8 +23,8 @@ import { RecipesComponent } from './recipes.component';
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    CommonModule, // for ngIf & ngFor, since BrowserModule can only be used once in an app (it does some app start-up things as well)
-    RecipesRoutingModule
+    RecipesRoutingModule,
+    SharedModule
   ]
 })
 export class RecipesModule {}
