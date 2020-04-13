@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ErrorHandler } from "@angular/core";
 import { NgForm } from '@angular/forms';
 import { AuthService, AuthResponseData } from './auth.service';
 import { Observable } from 'rxjs';
@@ -49,5 +49,9 @@ export class AuthComponent {
       });
 
     form.reset();
+  }
+
+  onHandleError() {
+    this.error = null;
   }
 }

@@ -1,0 +1,24 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw; /* take entire view port width */
+  height: 100vh; /* take entire view port height */
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 50; /* to set element above all other elements that could be there */
+}
+
+.alert-box {
+  position: fixed;
+  top: 30vh; /* to make it not sit right at the top of viewport */
+  left: 20vw;
+  width: 60vw;
+  padding: 16px;
+  z-index: 100; /* to set it ABOVE the backdrop */
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+}
+
+.alert-box-actions {
+  text-align: right;
+}
