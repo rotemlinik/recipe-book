@@ -28,10 +28,9 @@ export class RecipeDetailComponent implements OnInit {
   }
 
   onAddToShoppingList() {
-    this.store.dispatch(new shoppingListActions.AddIngredients(this.recipe.ingredients));
-    /* this.recipe.ingredients.forEach((ingredient) => {
-      
-    }) */
+    this.recipe.ingredients.forEach((ingredient) => {
+      this.store.dispatch(new shoppingListActions.AddIngredient(ingredient));
+    }) 
   }
 
   onEditRecipe() {

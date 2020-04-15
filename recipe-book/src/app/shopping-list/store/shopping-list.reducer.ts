@@ -22,25 +22,12 @@ export function shoppingListReducer(state: State = initialState, action: Shoppin
     case ShoppingListActions.ADD_INGREDIENT:
       return {
         ...state,
-        ingredients: [...state.ingredients, action.payload]
-      };
-    case ShoppingListActions.ADD_INGREDIENTS:
-      return {
-        ...state,
-        ingredients: [...state.ingredients, ...action.payload]
+        ingredients: addIngredientToList(state.ingredients.slice(), action.payload)
       };
     case ShoppingListActions.UPDATE_INGREDIENT:
-      const ingredient = state.ingredients[state.editedIngredientIndex];
-      const updatedIngredient = {
-        ...ingredient,
-        ...action.payload
-      };
-      const updatedIngredients = [...state.ingredients];
-      updatedIngredients[state.editedIngredientIndex] = updatedIngredient;
-
       return {
         ...state,
-        ingredients: updatedIngredients,
+        ingredients: updatedIngredient(state.ingredients.slice(), state.editedIngredientIndex, action.payload),
         editedIngredientIndex: -1,
         editedIngredient: null
       };
@@ -68,4 +55,28 @@ export function shoppingListReducer(state: State = initialState, action: Shoppin
     default:
       return state;
   }
+}
+
+function addIngredientToList(ingredients: Ingredient[], newIngredient: Ingredient) {
+  const existingIngredientIndex = ingredients.findIndex(itemInList => itemInList.name === newIngredient.name);
+
+  if (existingIngredientIndex > -1) {
+    const existingIngredient = ingredients[existingIngredientIndex];
+    ingredients[existingIngredientIndex] = new Ingredient(
+      existingIngredient.name, existingIngredient.amount + newIngredient.amount);
+  } else {
+    ingredients.push(newIngredient);
+  }
+
+  return ingredients;
+}
+
+function updatedIngredient(ingredients: Ingredient[], index: number, newIngredient: Ingredient) {
+  const oldIngredient = ingredients[index];
+  ingredients[index] = {
+    ...oldIngredient,
+    ...newIngredient
+  };
+
+  return ingredients;
 }
