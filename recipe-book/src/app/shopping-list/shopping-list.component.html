@@ -6,10 +6,13 @@
             <a 
                 class="list-group-item" 
                 style="cursor: pointer;" 
-                *ngFor="let ingredient of ingredients; let i = index"
+                *ngFor="let ingredient of (ingredients | async).ingredients; let i = index"
                 (click)="onEditItem(i)">
                 {{ ingredient.name }} ({{ ingredient.amount }})
             </a>
         </ul>
     </div>
 </div>
+
+<!-- in *ngFor, we use the 'async' pipe so that angular subscribes to the ingredients observable
+for us, and when is resolves it will then extract the ingredients array of it -->
