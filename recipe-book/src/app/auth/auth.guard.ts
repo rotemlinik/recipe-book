@@ -18,8 +18,7 @@ export class AuthGuard implements CanActivate {
       take(1),
       map(authState => authState.user),
       map(user => {
-      const isAuthenticated = user != null;
-      if (isAuthenticated) {
+      if (user != null) {
         return true;
       }
 
