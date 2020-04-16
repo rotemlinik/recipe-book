@@ -1,8 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { AuthService } from './auth/auth.service';
-import * as fromApp from './store/app.reducer';
-import * as authActions from './auth/store/auth.actions';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
+import * as authActions from './auth/store/auth.actions';
+import * as fromApp from './store/app.reducer';
 
 
 @Component({

@@ -13,6 +13,30 @@ const initialState: State = {
   editedIngredientIndex: -1
 };
 
+const addIngredientToList = (ingredients: Ingredient[], newIngredient: Ingredient) => {
+  const existingIngredientIndex = ingredients.findIndex(itemInList => itemInList.name === newIngredient.name);
+
+  if (existingIngredientIndex > -1) {
+    const existingIngredient = ingredients[existingIngredientIndex];
+    ingredients[existingIngredientIndex] = new Ingredient(
+      existingIngredient.name, existingIngredient.amount + newIngredient.amount);
+  } else {
+    ingredients.push(newIngredient);
+  }
+
+  return ingredients;
+}
+
+const updatedIngredient = (ingredients: Ingredient[], index: number, newIngredient: Ingredient) => {
+  const oldIngredient = ingredients[index];
+  ingredients[index] = {
+    ...oldIngredient,
+    ...newIngredient
+  };
+
+  return ingredients;
+}
+
 export function shoppingListReducer(state: State = initialState, action: ShoppingListActions.ShoppingListAction) {
   switch (action.type) {
     case ShoppingListActions.ADD_INGREDIENT:
@@ -51,28 +75,4 @@ export function shoppingListReducer(state: State = initialState, action: Shoppin
     default:
       return state;
   }
-}
-
-function addIngredientToList(ingredients: Ingredient[], newIngredient: Ingredient) {
-  const existingIngredientIndex = ingredients.findIndex(itemInList => itemInList.name === newIngredient.name);
-
-  if (existingIngredientIndex > -1) {
-    const existingIngredient = ingredients[existingIngredientIndex];
-    ingredients[existingIngredientIndex] = new Ingredient(
-      existingIngredient.name, existingIngredient.amount + newIngredient.amount);
-  } else {
-    ingredients.push(newIngredient);
-  }
-
-  return ingredients;
-}
-
-function updatedIngredient(ingredients: Ingredient[], index: number, newIngredient: Ingredient) {
-  const oldIngredient = ingredients[index];
-  ingredients[index] = {
-    ...oldIngredient,
-    ...newIngredient
-  };
-
-  return ingredients;
 }
