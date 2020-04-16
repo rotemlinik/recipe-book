@@ -108,7 +108,7 @@ export class AuthEffects {
     switchMap((authData: authActions.LoginStart) => { 
       return this.httpClient.post<AuthResponseData>(this.loginUrl, createAuthData(authData.payload))
       .pipe(
-        tap(responseData => this.authService.setLogoutTimer(+responseData.expiresIn)),
+        tap(responseData => this.authService.setLogoutTimer(+responseData.expiresIn * 1000)),
         map(responseData => handleAuthentication(responseData)),
         catchError(error => handleError(error))
       )

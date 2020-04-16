@@ -21,7 +21,7 @@ export function authReducer(state: State = initialState, action: AuthActions.Aut
         ...state,
         user: new User(action.payload.email, action.payload.userId, action.payload.token, action.payload.expirationDate),
         authError: null,
-        loading: false
+        isLoading: false
       };
     case AuthActions.LOGOUT:
       return {
@@ -33,14 +33,14 @@ export function authReducer(state: State = initialState, action: AuthActions.Aut
       return {
         ...state,
         authError: null,
-        loading: true
+        isLoading: true
       }
     case AuthActions.AUTHENTICATE_FAIL:
       return {
         ...state,
         user: null,
         authError: action.payload,
-        loading: false
+        isLoading: false
       }
     default:
       return state;
