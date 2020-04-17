@@ -1,26 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { map, tap } from 'rxjs/operators';
 import { Recipe } from '../recipes/recipe.model';
-import { RecipeService } from '../recipes/recipe.service';
-import * as fromApp from '../store/app.reducer';
 import * as recipeActions from '../recipes/store/recipe.actions';
-import { Store } from '@ngrx/store';
+import * as fromApp from '../store/app.reducer';
 
 @Injectable({providedIn: 'root'})
 export class DataStorageService {
   recipeBookBackendUrl = 'https://recipe-book-backend-9f161.firebaseio.com/recipes.json';
 
-  constructor(private httpClient: HttpClient,
-              private recipeService: RecipeService,
+  constructor(private httpClient: HttpClient
               private store: Store<fromApp.AppState>) {}
 
   storeRecipes() {
-    const recipes = this.recipeService.getRecipes();
-
-    this.httpClient
-      .put(this.recipeBookBackendUrl, recipes)
-      .subscribe(response => console.log(response))
+    this.store.dispatch(new recipeActions.StoreRecipes());
   }
 
   getRecipes() {
