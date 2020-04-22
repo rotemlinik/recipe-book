@@ -4,7 +4,9 @@
 
 export const environment = {
   production: false,
-  firebaseApiKey: 'AIzaSyCuowidyXAOQqaVYQwYFKOPbKQNMCjFgYQ'
+  firebaseApiKey: 'AIzaSyCuowidyXAOQqaVYQwYFKOPbKQNMCjFgYQ',
+  authBaseUrl: 'https://identitytoolkit.googleapis.com/v1/accounts:',
+  backendUrl: 'https://recipe-book-backend-9f161.firebaseio.com/recipes'
 };
 
 /*

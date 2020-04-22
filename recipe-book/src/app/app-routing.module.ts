@@ -22,7 +22,7 @@ const appRoutes: Routes = [
   // "PreloadAllModules" means initial bundle download is small - so initial loading is fast,
   // but when user starts browsing the website, other bundles are pre-loaded
   // so next navigation requests are kept fast 
-    imports: [RouterModule.forRoot(appRoutes, { preloadingStrategy: PreloadAllModules, initialNavigation: 'enabled' })],
+    imports: [RouterModule.forRoot(appRoutes, {preloadingStrategy: PreloadAllModules})],
     exports: [RouterModule] // makes it available at app module level
 })
 export class AppRoutingModule { }

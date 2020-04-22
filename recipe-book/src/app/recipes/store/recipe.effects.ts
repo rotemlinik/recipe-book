@@ -1,11 +1,22 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
+import { map, switchMap, withLatestFrom } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
+import { Recipe } from '../recipe.model';
 import * as recipeActions from './recipe.actions';
 import * as fromApp from './recipe.reducer';
-import { HttpClient } from '@angular/common/http';
-import { Recipe } from '../recipe.model';
-import { switchMap, map, tap, withLatestFrom } from 'rxjs/operators';
-import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Ingredient } from 'src/app/shared/ingredient.model';
+
+/* interface RecipeDBQuery {
+  id: string {
+    name: string,
+    description: string,
+    imagePath: string,
+    ingredients: Ingredient[]
+  }
+} */
 
 const addIngredientsArrayIfMissing = (recipes: Recipe[]) => {
   recipes.forEach(recipe => {
@@ -17,22 +28,49 @@ const addIngredientsArrayIfMissing = (recipes: Recipe[]) => {
   return recipes;
 }
 
+const URL_SUFFIX = '.json';
+
 @Injectable()
 export class RecipeEffects {
-  recipeBookBackendUrl = 'https://recipe-book-backend-9f161.firebaseio.com/recipes.json';
-
   @Effect()
   fetchRecipes = this.actions$.pipe(
     ofType(recipeActions.FETCH_RECIPES),
-    switchMap(() => this.httpClient.get<Recipe[]>(this.recipeBookBackendUrl)),
-    map(recipes => new recipeActions.SetRecipes(addIngredientsArrayIfMissing(recipes)))
+    switchMap(() => {
+      const recipes = this.httpClient.get<Recipe[]>(environment.backendUrl + URL_SUFFIX)
+      console.log(recipes);
+      return recipes;
+    }),
+    map(recipes => {
+      return new recipeActions.SetRecipes(addIngredientsArrayIfMissing(recipes))
+    })
   );
 
   @Effect({dispatch: false})
   storeRecipes = this.actions$.pipe(
     ofType(recipeActions.STORE_RECIPES),
     withLatestFrom(this.store.select('recipes')),
-    switchMap(([actionData, recipesState]) => this.httpClient.put(this.recipeBookBackendUrl, recipesState))
+    switchMap(([actionData, recipesState]) => this.httpClient.put(environment.backendUrl + URL_SUFFIX, recipesState))
+  )
+
+  @Effect()
+  updateRecipe = this.actions$.pipe(
+    ofType(recipeActions.UPDATE_RECIPE),
+    switchMap((updateRecipeAction : recipeActions.UpdateRecipe) => {
+      return this.httpClient.patch(
+        environment.backendUrl + '/' + updateRecipeAction.payload.index + '/' + URL_SUFFIX,
+        updateRecipeAction.payload.newRecipe
+      )
+    }),
+    map(() => new recipeActions.FetchRecipes())
+  )
+
+  @Effect()
+  deleteRecipe = this.actions$.pipe(
+    ofType(recipeActions.DELETE_RECIPE),
+    switchMap((deleteRecipeAction : recipeActions.DeleteRecipe) =>
+      this.httpClient.delete(environment.backendUrl + '/' + deleteRecipeAction.payload + '/' + URL_SUFFIX)
+    ),
+    map(() => new recipeActions.FetchRecipes())
   )
 
   constructor(private actions$: Actions,

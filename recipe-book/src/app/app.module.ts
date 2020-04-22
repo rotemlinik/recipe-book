@@ -14,7 +14,6 @@ import { AuthEffects } from './auth/store/auth.effects';
 import { HeaderComponent } from './header/header.component';
 import { RecipeEffects } from './recipes/store/recipe.effects';
 import { SharedModule } from './shared/shared.module';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -22,13 +21,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HeaderComponent,   
   ],
   imports: [
-    BrowserModule.withServerTransition({ appId: 'serverApp' }),
+    BrowserModule,
     FormsModule,
     HttpClientModule,
     StoreModule.forRoot(fromApp.appReducer),
     EffectsModule.forRoot([AuthEffects, RecipeEffects]),
     StoreDevtoolsModule.instrument({logOnly: environment.production}),
-    BrowserAnimationsModule,
     AppRoutingModule,
     SharedModule
   ],
